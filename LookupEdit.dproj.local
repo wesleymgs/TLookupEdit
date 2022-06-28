@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2022/06/24 22:05:51.000.343,=rtl.dcp</Transaction>
+    <Transaction>2022/06/24 22:06:31.000.521,C:\Users\Wesley\Documents\Embarcadero\Studio\Projects\Package1.dproj=D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\LookupEdit\LookupEdit.dproj</Transaction>
+    <Transaction>2022/06/24 22:09:01.000.939,=vcl.dcp</Transaction>
+    <Transaction>2022/06/24 22:09:01.000.911,=D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\LookupEdit\ULookupEdit.pas</Transaction>
+    <Transaction>2022/06/24 22:12:22.000.830,=dbrtl.dcp</Transaction>
+    <Transaction>2022/06/24 22:12:22.000.865,=vcldb.dcp</Transaction>
+    <Transaction>2022/06/24 22:14:35.000.922,D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\LookupEdit\LookupEdit.dproj=D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\LookupEdit\DBLookupEdit.dproj</Transaction>
+    <Transaction>2022/06/24 22:15:42.000.581,D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\LookupEdit\ULookupEdit.pas=D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\LookupEdit\UDBLookupEdit.pas</Transaction>
+    <Transaction>2022/06/24 23:19:34.000.289,=D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\DBLookupEdit\uAutoFree.pas</Transaction>
+    <Transaction>2022/06/25 01:08:54.000.538,D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\DBLookupEdit\uAutoFree.pas=</Transaction>
+    <Transaction>2022/06/26 11:06:46.000.431,D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\DBLookupEdit\DBLookupEdit.dproj=D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\DBLookupEdit\LookupEdit.dproj</Transaction>
+    <Transaction>2022/06/26 11:06:57.000.641,D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\DBLookupEdit\UDBLookupEdit.pas=D:\Backup Acer\Meus Documentos\Componentes\Delphi 10_3_Rio\DBLookupEdit\ULookupEdit.pas</Transaction>
+  </Transactions>
+</BorlandProject>
