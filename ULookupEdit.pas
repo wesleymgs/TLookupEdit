@@ -140,13 +140,23 @@ begin
       FGridFiltro.DataSource.DataSet.Filter   := GetSearchField(FSearchField);
       FGridFiltro.DataSource.DataSet.Filtered := True;
 
-      if (Parent.Top + Self.Top + FGridFiltro.Height + 2 > TWinControl(TControl(Self.Owner)).Height) then
-        FGridFiltro.Top        := Self.Parent.Top + Self.Top - (FGridFiltro.Height + 2)
-      else FGridFiltro.Top       := Self.Parent.Top + Self.Top + Self.Height + 2;
+      if (Parent <> TWinControl(TControl(Self.Owner))) then
+        begin
+          if (Parent.Top + Self.Top + FGridFiltro.Height + 2 > TWinControl(TControl(Self.Owner)).Height) then
+            FGridFiltro.Top := Self.Parent.Top + Self.Top - (FGridFiltro.Height + 2)
+          else FGridFiltro.Top := Self.Parent.Top + Self.Top + Self.Height + 2;
+          FGridFiltro.Left := Self.Parent.Left + Self.Left;
+        end
+      else
+        begin
+          if (Self.Top + FGridFiltro.Height + 2 > TWinControl(TControl(Self.Owner)).Height) then
+            FGridFiltro.Top := Self.Top - (FGridFiltro.Height + 2)
+          else FGridFiltro.Top := Self.Top + Self.Height + 2;
+          FGridFiltro.Left := Self.Left;
+        end;
 
       FGridFiltro.Parent     := TWinControl(TControl(Self.Owner));
       FGridFiltro.Width      := Self.Width;
-      FGridFiltro.Left       := Self.Parent.Left + Self.Left;
       //FGridFiltro.Top        := Self.Parent.Top + Self.Top + Self.Height + 2;
       SetWindowPos(FGridFiltro.Handle, HWND_TOPMOST, FGridFiltro.Left, FGridFiltro.Top, FGridFiltro.Width, FGridFiltro.Height, SWP_NOSIZE or SWP_NOACTIVATE or SWP_SHOWWINDOW);
       FGridFiltro.BringToFront;
@@ -233,7 +243,7 @@ end;
 
 procedure TLookupEdit.EditEnter(Sender: TObject);
 begin
-  FNewValue := Self.Text;
+  FOldValue := Self.Text;
   case FAutoList of
     alChange:
       begin
@@ -254,7 +264,7 @@ end;
 
 procedure TLookupEdit.EditExit(Sender: TObject);
 begin
-  FOldValue := Self.Text;
+  FNewValue := Self.Text;
 
   if (FNewValue <> FOldValue) and
      (not FItemSelected) then
@@ -340,6 +350,7 @@ begin
   cFieldType := FGridFiltro.DataSource.DataSet.FieldByName(AField).ClassName;
 
   if (cFieldType = 'TStringField') or
+     (cFieldType = 'TIBStringField') or
      (cFieldType = 'TWideStringField') then
     begin
       if (AOperator) then

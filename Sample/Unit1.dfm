@@ -32,7 +32,7 @@ object Form1: TForm1
       ListSource = DS
       KeyField = 'ID'
       DisplayField = 'NOME'
-      SearchField = 'ID;NOME;DATA_NASCIMENTO;SALARIO;HORA'
+      SearchField = 'ID'
       ShowColumn = 'ID;NOME'
       AutoList = alChange
     end
