@@ -190,40 +190,52 @@ begin
 end;
 
 function TLookupEdit.IsDate(AValue: String): Boolean;
+var
+  dOutput: TDateTime;
 begin
+  dOutput := 0;
   try
-    StrToDate(AValue);
-    Result := True;
+    if (TryStrToDate(AValue, dOutput)) then
+      Result := True;
   except
     Result := False;
   end;
 end;
 
 function TLookupEdit.IsFloat(AValue: String): Boolean;
+var
+  nOutput: Double;
 begin
+  nOutput := 0;
   try
-    StrToFloat(AValue);
-    Result := True;
+    if (TryStrToFloat(AValue, nOutput)) then
+      Result := True;
   except
     Result := False;
   end;
 end;
 
 function TLookupEdit.IsHour(AValue: String): Boolean;
+var
+  dOutput: TDateTime;
 begin
+  dOutput := 0;
   try
-    StrToTime(AValue);
-    Result := True;
+    if (TryStrToTime(AValue, dOutput)) then
+      Result := True;
   except
     Result := False;
   end;
 end;
 
 function TLookupEdit.IsInteger(AValue: String): Boolean;
+var
+  nOutput: Integer;
 begin
+  nOutput := 0;
   try
-    StrToInt(AValue);
-    Result := True;
+    if (TryStrToInt(AValue, nOutput)) then
+      Result := True;
   except
     Result := False;
   end;
