@@ -25,6 +25,9 @@ No <i>Object Inspector</i> do componente é possível ajustar 6 configurações,
 - Esta opção representa o(s) campo(s)/coluna(s) da tabela que será(ão) levado(s) em conta para o filtro.<br />
 - Para informar mais de um campo, separar por ";" (ponto e vírgula). Exemplo: ID;NOME;CPF<br /><br />
 
+<b>*ShowClearButton:</b><br />
+- Esta opção representa a limpeza completa do campo de uma só vez. Depois de digitar algum conteúdo, caso queira limpar o campo para iniciar uma nova busca basta clicar no botão com "x" que o campo será limpo.<br />
+
 <b>*ShowColumn:</b><br />
 - Esta opção representa o(s) campo(s)/coluna(s) da tabela que será(ão) exibido(s) no grid.<br />
 - Para informar mais de um campo, separar por ";" (ponto e vírgula). Exemplo: ID;NOME;CPF
