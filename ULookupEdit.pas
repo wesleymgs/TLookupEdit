@@ -14,7 +14,8 @@ interface
 uses
   System.SysUtils, System.Classes, Vcl.Controls, Vcl.DBCtrls,
   Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.Forms, System.Variants,
-  Vcl.Dialogs, Vcl.StdCtrls, System.StrUtils, Winapi.Windows;
+  Vcl.Dialogs, Vcl.StdCtrls, System.StrUtils, Winapi.Windows,
+  System.Threading;
 
 type
   TAutoList = (alChange, alEnter);
@@ -23,6 +24,7 @@ type
     { Private declarations }
     FListSource: TDataSource;
     FGridFiltro: TDBGrid;
+    FClearBtn: TButton;
     FKeyField: String;
     FDisplayField: String;
     FSearchField: String;
@@ -31,6 +33,8 @@ type
     FOldValue: String;
     FAutoList: TAutoList;
     FItemSelected: Boolean;
+    FShowClearButton: Boolean;
+
 
     procedure SetListSource(const Value: TDataSource);                                //Seta o DataSource selecionado pelo usuário para exibir os dados
     procedure FGridFiltroCellDblClick(Sender: TObject);                               //Evento DblClick do grid
@@ -54,6 +58,8 @@ type
     procedure FGridFiltroKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState); //Evento OnKeyDown do grid
     procedure EditExit(Sender: TObject);                                              //Evento OnExit do edit
     procedure FGridFiltroExit(Sender: TObject);                                       //Evento OnExit do grid
+    procedure FClearBtnClick(Sender: TObject);                                        //Evento OnClick do button
+    procedure SetShowClearButton(const Value: Boolean);                               //Seta o ShowClearButton para exibir ou não o botão de limpar o edit
   protected
     { Protected declarations }
   public
@@ -71,6 +77,7 @@ type
     property SearchField: String read FSearchField write SetSearchField;
     property ShowColumn: String read FShowColumn write SetShowColumn;
     property AutoList: TAutoList read FAutoList write SetAutoList;
+    property ShowClearButton: Boolean read FShowClearButton write SetShowClearButton;
   end;
 
 procedure Register;
@@ -95,6 +102,11 @@ begin
       FGridFiltro.OnKeyDown  := FGridFiltroKeyDown;
       FGridFiltro.OnExit     := FGridFiltroExit;
       FGridFiltro.Options    := [dgColumnResize,dgTabs,dgRowSelect,dgConfirmDelete,dgCancelOnExit,dgTitleClick,dgTitleHotTrack];
+
+      FClearBtn              := TButton.Create(Self.Owner);
+      FClearBtn.Caption      := 'x';
+      FClearBtn.OnClick      := FClearBtnClick;
+      FClearBtn.Visible      := False;
     end;
 
   FItemSelected  := False;
@@ -111,55 +123,92 @@ begin
   inherited;
 end;
 
+procedure TLookupEdit.FClearBtnClick(Sender: TObject);
+begin
+  Self.Text         := EmptyStr;
+  KeyFieldValue     := EmptyStr;
+  DisplayFieldValue := EmptyStr;
+  Self.SetFocus;
+end;
+
 procedure TLookupEdit.FGridFiltroCellDblClick(Sender: TObject);
 begin
+  FItemSelected := True;
   SetResultFilter;
 end;
 
 procedure TLookupEdit.FGridFiltroExit(Sender: TObject);
 begin
-  FGridFiltro.Visible := FItemSelected;
+  FGridFiltro.Visible := False;
 end;
 
 procedure TLookupEdit.FGridFiltroKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
+  if (FGridFiltro.DataSource.DataSet.Bof) and
+     (Key = VK_UP) then
+    Self.SetFocus;
+
   if (Key = VK_RETURN) then
     SetResultFilter;
 end;
 
 procedure TLookupEdit.Filter;
+var
+  cSearchField: String;
 begin
   if not (csDesigning in ComponentState) then
     begin
-      FGridFiltro.DataSource := ListSource;
-
-      SetColumnFGridFiltro;
-
-      FGridFiltro.DataSource.DataSet.Filtered := False;
-      FGridFiltro.DataSource.DataSet.Filter   := GetSearchField(FSearchField);
-      FGridFiltro.DataSource.DataSet.Filtered := True;
-
-      if (Parent <> TWinControl(TControl(Self.Owner))) then
+      if Assigned(ListSource) then
         begin
-          if (Parent.Top + Self.Top + FGridFiltro.Height + 2 > TWinControl(TControl(Self.Owner)).Height) then
-            FGridFiltro.Top := Self.Parent.Top + Self.Top - (FGridFiltro.Height + 2)
-          else FGridFiltro.Top := Self.Parent.Top + Self.Top + Self.Height + 2;
-          FGridFiltro.Left := Self.Parent.Left + Self.Left;
-        end
-      else
-        begin
-          if (Self.Top + FGridFiltro.Height + 2 > TWinControl(TControl(Self.Owner)).Height) then
-            FGridFiltro.Top := Self.Top - (FGridFiltro.Height + 2)
-          else FGridFiltro.Top := Self.Top + Self.Height + 2;
-          FGridFiltro.Left := Self.Left;
+          FGridFiltro.DataSource := ListSource;
+
+          SetColumnFGridFiltro;
+          cSearchField := GetSearchField(FSearchField);
+
+          if (cSearchField <> EmptyStr) then
+            begin
+              FGridFiltro.DataSource.DataSet.Filtered := False;
+              FGridFiltro.DataSource.DataSet.Filter   := cSearchField;
+              FGridFiltro.DataSource.DataSet.Filtered := True;
+            end
+          else
+            begin
+              FGridFiltro.DataSource := nil;
+            end;
+
+          if (Parent <> TWinControl(TControl(Self.Owner))) then
+            begin
+              if (Parent.Top + Self.Top + FGridFiltro.Height + 2 > TWinControl(TControl(Self.Owner)).Height) then
+                FGridFiltro.Top := Self.Parent.Top + Self.Top - (FGridFiltro.Height + 2)
+              else FGridFiltro.Top := Self.Parent.Top + Self.Top + Self.Height + 2;
+              FGridFiltro.Left := Self.Parent.Left + Self.Left;
+            end
+          else
+            begin
+              if (Self.Top + FGridFiltro.Height + 2 > TWinControl(TControl(Self.Owner)).Height) then
+                FGridFiltro.Top := Self.Top - (FGridFiltro.Height + 2)
+              else FGridFiltro.Top := Self.Top + Self.Height + 2;
+              FGridFiltro.Left := Self.Left;
+            end;
+
+          FGridFiltro.Parent     := TWinControl(TControl(Self.Owner));
+          FGridFiltro.Width      := Self.Width;
+          //FGridFiltro.Top        := Self.Parent.Top + Self.Top + Self.Height + 2;
+          SetWindowPos(FGridFiltro.Handle, HWND_TOPMOST, FGridFiltro.Left, FGridFiltro.Top, FGridFiltro.Width, FGridFiltro.Height, SWP_NOSIZE or SWP_NOACTIVATE or SWP_SHOWWINDOW);
+          FGridFiltro.BringToFront;
         end;
 
-      FGridFiltro.Parent     := TWinControl(TControl(Self.Owner));
-      FGridFiltro.Width      := Self.Width;
-      //FGridFiltro.Top        := Self.Parent.Top + Self.Top + Self.Height + 2;
-      SetWindowPos(FGridFiltro.Handle, HWND_TOPMOST, FGridFiltro.Left, FGridFiltro.Top, FGridFiltro.Width, FGridFiltro.Height, SWP_NOSIZE or SWP_NOACTIVATE or SWP_SHOWWINDOW);
-      FGridFiltro.BringToFront;
+      if (FClearBtn.Visible) then
+        begin
+          FClearBtn.Parent       := Self.Parent;
+          FClearBtn.Top          := Self.Top + 1;
+          FClearBtn.Width        := 19;
+          FClearBtn.Height       := 19;
+          FClearBtn.Left         := Self.Left + Self.Width - FClearBtn.Width - 1;
+          FClearBtn.TabStop      := False;
+          FClearBtn.BringToFront;
+        end;
     end;
 end;
 
@@ -245,11 +294,14 @@ procedure TLookupEdit.EditChange(Sender: TObject);
 begin
   if not (csDesigning in ComponentState) then
     begin
+      FClearBtn.Visible := (Self.Text <> EmptyStr) and (FShowClearButton);
+
       Filter;
 
       FGridFiltro.Visible := Self.Text <> EmptyStr;
       Repaint;
-      FItemSelected       := False;
+
+      FItemSelected := False;
     end;
 end;
 
@@ -275,23 +327,33 @@ begin
 end;
 
 procedure TLookupEdit.EditExit(Sender: TObject);
+var
+  Key: Word;
 begin
   FNewValue := Self.Text;
+  Key := VK_TAB;
+  Self.OnKeyDown(Sender, Key, []);
+  if (Assigned(FGridFiltro.DataSource)) and (FGridFiltro.DataSource.DataSet.RecordCount > 0) then
+    FItemSelected := True;
 
   if (FNewValue <> FOldValue) and
      (not FItemSelected) then
     begin
       KeyFieldValue       := EmptyStr;
       DisplayFieldValue   := EmptyStr;
+      FGridFiltro.Visible := False;
     end;
 end;
 
 procedure TLookupEdit.EditKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if ((Key = VK_DOWN) or (Key = VK_UP)) and
-     (FGridFiltro.Visible) then
-    FGridFiltro.SetFocus;
+  if ((Key = VK_DOWN) or (Key = VK_UP) or (Key = VK_TAB)) and
+     ((Assigned(FGridFiltro.DataSource)) and (FGridFiltro.DataSource.DataSet.RecordCount > 0) and (FGridFiltro.Visible)) then
+    begin
+      FItemSelected := True;
+      FGridFiltro.SetFocus;
+    end;
 
   if (Key = VK_ESCAPE) then
     begin
@@ -348,6 +410,11 @@ end;
 procedure TLookupEdit.SetSearchField(const Value: String);
 begin
   FSearchField := Value;
+end;
+
+procedure TLookupEdit.SetShowClearButton(const Value: Boolean);
+begin
+  FShowClearButton := Value;
 end;
 
 procedure TLookupEdit.SetShowColumn(const Value: String);

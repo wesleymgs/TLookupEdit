@@ -35,6 +35,7 @@ object Form1: TForm1
       SearchField = 'ID'
       ShowColumn = 'ID;NOME'
       AutoList = alChange
+      ShowClearButton = True
     end
     object Button1: TButton
       Left = 399
@@ -65,6 +66,7 @@ object Form1: TForm1
       SearchField = 'ID;DESCRICAO'
       ShowColumn = 'DESCRICAO'
       AutoList = alEnter
+      ShowClearButton = False
     end
     object Button2: TButton
       Left = 399
