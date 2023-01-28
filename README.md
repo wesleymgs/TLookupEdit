@@ -30,6 +30,4 @@ No <i>Object Inspector</i> do componente é possível ajustar 6 configurações,
 - Para informar mais de um campo, separar por ";" (ponto e vírgula). Exemplo: ID;NOME;CPF
 
 # Considerações finais
-- Ao utilizar o componente em modo debug, pode acontecer de um erro de conversão ser exibido. Calma, isso ocorre porque no método de filtragem dos dados eu verifico, de acordo com os campo(s)/coluna(s) configurados na propriedade "SeachField", os seus respectivos tipos (TStringField, TIntegerField, etc) para que o filtro possa ser aplicado e os resultados possam ser apresentados de forma coerente com o texto digitado no LookupEdit. Então, isso é totalmente normal acontecer, basta prosseguir com a execução do projeto, além de que, como as execuções estão dentro de um Try/Except, em modo release o erro não será apresentado.
-
 - O componente foi desenvolvido para realizar as filtragens através do método <b>Filter</b> da classe TDataSet, então, ele só irá trabalhar 100% corretamente se o seu componente que monta a tabela possuir essa propriedade e permitir seu uso. Adianto que essa propriedade Filter não funciona com o IBQuery da paleta Interbase. Em seu desenvolvimento o LookupEdit foi testado com ClientDataSet e FDQuery, obtendo êxito em seu funcionamento.
